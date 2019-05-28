@@ -72,9 +72,8 @@ void insertionSort(vector<hafmanTreeNode*> &vec, unsigned int l, unsigned int r)
 
 int main()
 {
-	ifstream input("input.txt");
-	ofstream output("output.txt");
-	vector<char> text;
+	ifstream input("input.txt", ios_base::in | ios_base::binary);
+	
 	vector<unsigned int> chCount;
 	char ch;
 	while (!input.eof()) {
@@ -83,10 +82,9 @@ int main()
 			chCount.resize(ch + 1);
 		}
 		chCount[ch]++;
-		text.push_back(ch);
 	}
 	chCount[ch]--;
-	text.erase(text.end() - 1);
+	input.close();
 	vector<hafmanTreeNode*> hafVec;
 	for (int i = 0; i < chCount.size(); i++) {
 		if (chCount[i] > 0) {
@@ -116,11 +114,14 @@ int main()
 		count = hafVec.size() - 1;
 		while (count > 0 && hafVec[count - 1]->pot < hafVec[count]->pot) {
 			swap(hafVec[count - 1], hafVec[count]);
+			count--;
 		}
 	}
+	//создание словаря
 	vector<transcr> dictionary;
 	vector<bool> code;
 	getDictionary(hafVec[0], dictionary, code);
+	//вывод полученной кодировки в консоль
 	for (int i = 0; i < dictionary.size(); i++) {
 		for (int j = 0; j < dictionary[i].code.size(); j++) {
 			if (dictionary[i].code[j] == true)
@@ -130,5 +131,46 @@ int main()
 		}
 		cout << dictionary[i].ch << endl;
 	}
+	//создание быстрого доступа для кодирования
+	vector<vector<bool>> easyAccDict;
+	for (int i = 0; i < dictionary.size(); i++) {
+		if (easyAccDict.size() <= dictionary[i].ch)
+			easyAccDict.resize(dictionary[i].ch + 1);
+		easyAccDict[dictionary[i].ch] = dictionary[i].code;
+	}
+	//вывод словаря
+	ofstream output("output", ios_base::out | ios_base::trunc | ios_base::binary);
+	ch = dictionary.size();
+	output << ch;
+	for (int i = 0; i < dictionary.size(); i++) {
+		ch = dictionary[i].code.size();
+		output << ch;
+		for (int j = 0; j < dictionary[i].code.size(); j++) {
+			output << dictionary[i].code[j];
+		}
+	}
+
+	//кодирование текста
+	input.open("input.txt", ios_base::in | ios_base::binary);
+
+	bool bit [CHAR_BIT];
+	while (!input.eof()) {
+		input >> ch;
+		for (int i = 0; i < easyAccDict[ch].size(); i++) {
+			
+			if (easyAccDict[ch][i]) {
+				bit[0] = 1;
+				output << bit[0];
+			}
+			else {
+				bit[0] = 0;
+				output << bit[0];
+			}
+		}
+
+	}
+	input.close();
+	output.close();
+
 	return 0;
 }
