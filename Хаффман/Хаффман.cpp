@@ -72,7 +72,7 @@ void insertionSort(vector<hafmanTreeNode*> &vec, unsigned int l, unsigned int r)
 
 int main()
 {
-	ifstream input("input.txt", ios_base::in | ios_base::binary);
+	ifstream input("input", ios_base::in | ios_base::binary);
 	
 	vector<unsigned int> chCount;
 	char ch;
@@ -151,7 +151,7 @@ int main()
 	}
 
 	//кодирование текста
-	input.open("input.txt", ios_base::in | ios_base::binary);
+	input.open("input", ios_base::in | ios_base::binary);
 
 	bool bit [CHAR_BIT];
 	while (!input.eof()) {
