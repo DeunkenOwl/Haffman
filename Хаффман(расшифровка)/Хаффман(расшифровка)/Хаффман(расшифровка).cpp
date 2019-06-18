@@ -6,7 +6,7 @@ using namespace std;
 //узел дерева хаффмана
 struct treeNode {
 	vector<bool> code;
-	char ch;
+	char ch = -1;
 	treeNode* left = NULL;
 	treeNode* right = NULL;
 };
@@ -80,18 +80,40 @@ int main()
 	//расшифровка в вывод
 	ofstream output("output", ios_base::out | ios_base::trunc | ios_base::binary);
 	treeNode* temp = hafTree;
-	while (input >> ch) {
-		//обходим дерево с каждым символом
-		if (ch == '0')
-			temp = temp->left;
-		else
-			temp = temp->right;
+	
+	//while (input >> ch) {
 
-		//если нашли символ, то записываем его в файл
-		if (temp->ch >= 0) {
-			output << temp->ch;
-			temp = hafTree;
+	//	//обходим дерево с каждым символом
+	//	if (ch == '0')
+	//		temp = temp->left;
+	//	else
+	//		temp = temp->right;
+
+	//	//если нашли символ, то записываем его в файл
+	//	if (temp->ch >= 0) {
+	//		output << temp->ch;
+	//		temp = hafTree;
+	//	}
+	//}
+	int count = 0;
+	input >> ch;
+	unsigned char mask = 1;
+	mask = mask << 7;
+	while (!input.eof()) {
+		while (temp->ch < 0) {
+			if ((ch & mask) == 0)
+				temp = temp->left;
+			else
+				temp = temp->right;
+			count++;
+			ch = ch << 1;
+			if (count == 7) {
+				input >> ch;
+				count = 0;
+			}
 		}
+		output << temp->ch;
+		temp = hafTree;
 	}
 	
 	input.close();

@@ -158,6 +158,7 @@ int main()
 	}
 
 	//вывод словаря в файл
+	
 	ofstream output("output", ios_base::out | ios_base::trunc | ios_base::binary);
 	ch = dictionary.size();
 	output << ch;
@@ -172,18 +173,36 @@ int main()
 
 	//кодирование и вывод текста
 	input.open("input", ios_base::in | ios_base::binary);
+	//тест
+	unsigned char outCode = 0;
+	count = 0;
 	while (input >> ch) {
 		
 		for (int i = 0; i < easyAccDict[ch].size(); i++) {
-			
-			if (easyAccDict[ch][i]) {
-				output << unsigned(1);
+			//тест
+			outCode = outCode | easyAccDict[ch][i];
+			outCode = outCode << 1;
+			count++;
+			if (count == 7) {
+				count = 0;
+				output << outCode;
+				outCode = 0;
 			}
-			else {
-				output << unsigned(0);
-			}
+			//if (easyAccDict[ch][i]) {
+			//	output << unsigned(1);
+			//}
+			//else {
+			//	output << unsigned(0);
+			//}
 		}
 
+	}
+	if (count != 0) {
+		while (count != 7) {
+			outCode << 1;
+			count++;
+		}
+		output << outCode;
 	}
 	input.close();
 	output.close();
